@@ -1,0 +1,548 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>AI Jobs Outlook</title>
+<meta name="description" content="Published forecasts of jobs created and lost as AI and automation spread, 2016–2034.">
+<style>
+  :root {
+    color-scheme: light;
+    --page: #f9f9f7;
+    --surface: #fcfcfb;
+    --ink: #0b0b0b;
+    --ink-2: #52514e;
+    --muted: #898781;
+    --grid: #e1e0d9;
+    --axis: #c3c2b7;
+    --border: rgba(11,11,11,0.10);
+    --gain: #2a78d6;
+    --gain-soft: #9ec5f4;
+    --loss: #e34948;
+    --loss-soft: #f2a9a8;
+    --s1: #2a78d6;
+    --s2: #eb6834;
+    --s3: #1baf7a;
+    --up: #006300;
+    --down: #b3261e;
+    --tip-bg: #0b0b0b;
+    --tip-ink: #ffffff;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      color-scheme: dark;
+      --page: #0d0d0d;
+      --surface: #1a1a19;
+      --ink: #ffffff;
+      --ink-2: #c3c2b7;
+      --grid: #2c2c2a;
+      --axis: #383835;
+      --border: rgba(255,255,255,0.10);
+      --gain: #3987e5;
+      --gain-soft: #1c5cab;
+      --loss: #e66767;
+      --loss-soft: #8f3434;
+      --s1: #3987e5;
+      --s2: #d95926;
+      --s3: #199e70;
+      --up: #0ca30c;
+      --down: #e66767;
+      --tip-bg: #f9f9f7;
+      --tip-ink: #0b0b0b;
+    }
+  }
+  :root[data-theme="dark"] {
+    color-scheme: dark;
+    --page: #0d0d0d;
+    --surface: #1a1a19;
+    --ink: #ffffff;
+    --ink-2: #c3c2b7;
+    --grid: #2c2c2a;
+    --axis: #383835;
+    --border: rgba(255,255,255,0.10);
+    --gain: #3987e5;
+    --gain-soft: #1c5cab;
+    --loss: #e66767;
+    --loss-soft: #8f3434;
+    --s1: #3987e5;
+    --s2: #d95926;
+    --s3: #199e70;
+    --up: #0ca30c;
+    --down: #e66767;
+    --tip-bg: #f9f9f7;
+    --tip-ink: #0b0b0b;
+  }
+
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--page);
+    color: var(--ink);
+    font: 15px/1.5 system-ui, -apple-system, "Segoe UI", sans-serif;
+  }
+  main { max-width: 980px; margin: 0 auto; padding: 32px 16px 64px; }
+  h1 { font-size: 28px; line-height: 1.2; margin: 0 0 8px; font-weight: 650; }
+  h2 { font-size: 18px; margin: 0 0 4px; font-weight: 600; }
+  .lede { color: var(--ink-2); margin: 0 0 24px; max-width: 70ch; }
+  .sub { color: var(--ink-2); margin: 0 0 16px; font-size: 14px; max-width: 75ch; }
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 20px;
+    margin-bottom: 20px;
+  }
+  .tiles { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 12px; margin-bottom: 20px; }
+  .tile { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 14px 16px; }
+  .tile .label { color: var(--ink-2); font-size: 13px; }
+  .tile .value { font-size: 30px; font-weight: 600; line-height: 1.2; margin-top: 2px; }
+  .tile .note { color: var(--muted); font-size: 12px; margin-top: 2px; }
+  .key { display: inline-block; width: 10px; height: 10px; border-radius: 2px; margin-right: 6px; vertical-align: baseline; }
+  .legend { display: flex; flex-wrap: wrap; gap: 6px 18px; font-size: 13px; color: var(--ink-2); margin: 0 0 8px; }
+  .legend span { display: inline-flex; align-items: center; }
+  .legend .diamond { width: 9px; height: 9px; background: var(--ink); transform: rotate(45deg); margin-right: 8px; border-radius: 1px; }
+  .legend .whisker { width: 16px; height: 2px; background: var(--muted); margin-right: 6px; }
+  .seg { display: inline-flex; border: 1px solid var(--border); border-radius: 8px; padding: 2px; margin: 0 0 12px; background: var(--page); }
+  .seg button { font: inherit; font-size: 13px; color: var(--ink-2); background: none; border: 0; border-radius: 6px; padding: 4px 10px; cursor: pointer; }
+  .seg button[aria-pressed="true"] { background: var(--surface); color: var(--ink); box-shadow: 0 0 0 1px var(--border); font-weight: 600; }
+  svg { display: block; width: 100%; height: auto; overflow: visible; }
+  svg text { font-family: inherit; }
+  .tick { fill: var(--muted); font-size: 12px; font-variant-numeric: tabular-nums; }
+  .rowlabel { fill: var(--ink); font-size: 13px; }
+  .rowsub { fill: var(--muted); font-size: 12px; }
+  .val { fill: var(--ink-2); font-size: 12px; font-variant-numeric: tabular-nums; }
+  .hit { fill: transparent; cursor: default; }
+  .hit:focus { outline: none; }
+  .hit:focus-visible { stroke: var(--ink); stroke-width: 1; }
+  .bar { transition: opacity .12s; }
+  .row.dim .bar { opacity: .45; }
+  #tip {
+    position: fixed; pointer-events: none; z-index: 10;
+    background: var(--tip-bg); color: var(--tip-ink);
+    padding: 8px 10px; border-radius: 8px; font-size: 12.5px; line-height: 1.45;
+    max-width: 300px; opacity: 0; transition: opacity .1s;
+    box-shadow: 0 4px 16px rgba(0,0,0,.18);
+  }
+  #tip .t { font-weight: 600; margin-bottom: 4px; }
+  #tip .r { display: flex; align-items: center; gap: 8px; }
+  #tip .r b { font-variant-numeric: tabular-nums; }
+  #tip .lk { width: 12px; height: 2px; flex: none; }
+  #tip .n { opacity: .75; margin-top: 4px; }
+  details { margin-top: 12px; font-size: 13px; }
+  summary { cursor: pointer; color: var(--ink-2); }
+  table { border-collapse: collapse; width: 100%; margin-top: 8px; font-size: 13px; }
+  th, td { text-align: left; padding: 6px 8px; border-bottom: 1px solid var(--grid); vertical-align: top; }
+  td.num, th.num { text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
+  .tablewrap { overflow-x: auto; }
+  .lists { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+  .lists h3 { font-size: 14px; margin: 0 0 6px; display: flex; align-items: center; }
+  .lists ul { margin: 0; padding-left: 18px; font-size: 14px; color: var(--ink-2); }
+  .lists li { margin: 2px 0; }
+  .caveat { font-size: 13px; color: var(--ink-2); border-left: 3px solid var(--axis); padding: 2px 0 2px 12px; margin: 12px 0 0; }
+  .sources { font-size: 13px; color: var(--ink-2); }
+  .sources li { margin: 4px 0; }
+  a { color: var(--gain); }
+  @media (max-width: 640px) {
+    h1 { font-size: 23px; }
+    .lists { grid-template-columns: 1fr; }
+    .tile .value { font-size: 26px; }
+    .card { padding: 16px 12px; }
+  }
+</style>
+</head>
+<body>
+<main>
+  <h1>Jobs created and lost as AI spreads</h1>
+  <p class="lede">What the major forecasters predict will happen to jobs as AI and automation are adopted: how many are created, how many are displaced, and which kinds of work grow or shrink. Every number below comes from a published source listed at the bottom.</p>
+
+  <div class="tiles" aria-label="Headline figures, WEF Future of Jobs Report 2025">
+    <div class="tile"><div class="label"><span class="key" style="background:var(--gain)"></span>Jobs created worldwide, 2025–2030</div><div class="value">170M</div><div class="note">WEF 2025, all drivers of change</div></div>
+    <div class="tile"><div class="label"><span class="key" style="background:var(--loss)"></span>Jobs displaced worldwide, 2025–2030</div><div class="value">92M</div><div class="note">WEF 2025, all drivers of change</div></div>
+    <div class="tile"><div class="label">Net change by 2030</div><div class="value" style="color:var(--up)">+78M</div><div class="note">About 7% of today's employment</div></div>
+    <div class="tile"><div class="label">From AI &amp; information processing alone</div><div class="value">+11M / −9M</div><div class="note">Created / displaced, net +2M</div></div>
+  </div>
+
+  <section class="card" aria-labelledby="h-forecasts">
+    <h2 id="h-forecasts">Forecasts of jobs created vs. displaced, by target year</h2>
+    <p class="sub">Each row is one published forecast, ordered by the year it looks ahead to. Bars to the right are jobs created; bars to the left are jobs displaced. The diamond is the net change. Figures are worldwide, in millions of jobs.</p>
+    <div class="legend">
+      <span><span class="key" style="background:var(--gain)"></span>Jobs created</span>
+      <span><span class="key" style="background:var(--loss)"></span>Jobs displaced</span>
+      <span><span class="diamond"></span>Net change</span>
+      <span><span class="whisker"></span>Upper end of a range</span>
+    </div>
+    <div class="seg" role="group" aria-label="Chart scale">
+      <button type="button" data-zoom="all" aria-pressed="true">All forecasts</button>
+      <button type="button" data-zoom="wef" aria-pressed="false">WEF only (zoomed in)</button>
+    </div>
+    <div id="chart-forecasts"></div>
+    <p class="caveat">These forecasts aren't directly comparable. WEF numbers come from employer surveys covering the occupations in its dataset (about 1.2 billion jobs in 2025) and count every driver of change: AI, the green transition, demographics, and the economy. McKinsey models automation only, across the whole global workforce, so its numbers are much larger. Goldman Sachs (2023) estimated that about 300 million full-time jobs worldwide are <em>exposed</em> to generative AI, which isn't the same as lost, so it isn't plotted.</p>
+    <details><summary>Show as a table</summary><div class="tablewrap"><table id="table-forecasts"></table></div></details>
+  </section>
+
+  <section class="card" aria-labelledby="h-tasks">
+    <h2 id="h-tasks">How much work is done by people vs. technology</h2>
+    <p class="sub">As adoption rises, employers expect the share of work tasks done by people alone to fall from 47% to 33% by 2030. The share done mainly by machines and algorithms rises from 22% to 34%. WEF notes this compares shares, not the total amount of work, which is also expected to grow.</p>
+    <div class="legend">
+      <span><span class="key" style="background:var(--s1)"></span>Mainly people</span>
+      <span><span class="key" style="background:var(--s2)"></span>People and technology together</span>
+      <span><span class="key" style="background:var(--s3)"></span>Mainly technology</span>
+    </div>
+    <div id="chart-tasks"></div>
+  </section>
+
+  <section class="card" aria-labelledby="h-us">
+    <h2 id="h-us">US jobs the BLS expects AI to push up or down, 2024–2034</h2>
+    <p class="sub">Projected change in employment for occupations the Bureau of Labor Statistics names as affected by AI adoption. For comparison, total US employment is projected to grow 3.1% (+5.2 million jobs). Hover or focus a bar to see the number of jobs.</p>
+    <div class="legend">
+      <span><span class="key" style="background:var(--gain)"></span>Projected growth</span>
+      <span><span class="key" style="background:var(--loss)"></span>Projected decline</span>
+      <span><span class="whisker" style="background:var(--ink-2)"></span>All occupations: +3.1%</span>
+    </div>
+    <div id="chart-us"></div>
+    <details><summary>Show as a table</summary><div class="tablewrap"><table id="table-us"></table></div></details>
+  </section>
+
+  <section class="card" aria-labelledby="h-roles">
+    <h2 id="h-roles">Job types with the biggest worldwide gains and losses, 2025–2030</h2>
+    <p class="sub">The 15 job types with the largest expected increase and decrease in total jobs, listed as they appear in WEF 2025, Figure 2.4. Farmworkers lead the gains at about +35 million, driven mostly by the green transition rather than AI. The losses are dominated by clerical and admin work, where employers point to AI and digital access as the main drivers.</p>
+    <div class="lists">
+      <div>
+        <h3><span class="key" style="background:var(--gain)"></span>Largest growth</h3>
+        <ul id="list-grow"></ul>
+      </div>
+      <div>
+        <h3><span class="key" style="background:var(--loss)"></span>Largest decline</h3>
+        <ul id="list-decline"></ul>
+      </div>
+    </div>
+  </section>
+
+  <section class="card" aria-labelledby="h-src">
+    <h2 id="h-src">Sources</h2>
+    <ul class="sources">
+      <li>World Economic Forum, <a href="https://reports.weforum.org/docs/WEF_Future_of_Jobs_Report_2025.pdf">Future of Jobs Report 2025</a> (Jan 2025): 170M created / 92M displaced 2025–2030; AI &amp; information processing 11M / 9M (§2.2); task shares (Figure 2.7); largest growing and declining jobs (Figure 2.4).</li>
+      <li>World Economic Forum, <a href="https://www.weforum.org/press/2023/04/future-of-jobs-report-2023-up-to-a-quarter-of-jobs-expected-to-change-in-next-five-years/">Future of Jobs Report 2023</a>: 69M created / 83M eliminated by 2027.</li>
+      <li>World Economic Forum, <a href="https://www.weforum.org/publications/the-future-of-jobs-report-2020/in-full/executive-summary/">Future of Jobs Report 2020</a>: 97M new roles / 85M displaced by 2025.</li>
+      <li>McKinsey Global Institute, <a href="https://www.mckinsey.com/featured-insights/future-of-work/jobs-lost-jobs-gained-what-the-future-of-work-will-mean-for-jobs-skills-and-wages">Jobs lost, jobs gained</a> (Dec 2017): 400M displaced (midpoint) to 800M (fastest adoption); 555M–890M additional labor demand, 2016–2030.</li>
+      <li>US Bureau of Labor Statistics, <a href="https://www.bls.gov/opub/ted/2026/artificial-intelligence-information-technology-and-employment-2024-34.htm">Artificial intelligence, information technology, and employment, 2024–34</a> (The Economics Daily, Jul 2026).</li>
+      <li>Goldman Sachs, <a href="https://www.goldmansachs.com/insights/articles/how-will-ai-affect-the-us-labor-market">How will AI affect the US labor market?</a>: 6–7% of US workers could be displaced if AI is widely adopted over about 10 years; around 300M jobs exposed worldwide.</li>
+    </ul>
+  </section>
+</main>
+<div id="tip" role="status" aria-live="polite"></div>
+
+<script>
+const NS = 'http://www.w3.org/2000/svg';
+
+// Worldwide forecasts, millions of jobs. hi* marks the top of a published range.
+const FORECASTS = [
+  { source: 'WEF Future of Jobs 2020', span: '2020 → 2025', created: 97, displaced: 85,
+    note: 'Employer survey, 15 industries in 26 economies; all drivers of change.' },
+  { source: 'WEF Future of Jobs 2023', span: '2023 → 2027', created: 69, displaced: 83,
+    note: 'Employer survey over 673M jobs; a net loss of 14M (2% of employment).' },
+  { source: 'WEF Future of Jobs 2025', span: '2025 → 2030', created: 170, displaced: 92,
+    note: 'Employer survey, 55 economies; all drivers of change. 22% of jobs disrupted.' },
+  { source: 'WEF 2025, AI only', span: '2025 → 2030', created: 11, displaced: 9,
+    note: 'The share attributed to AI and information processing technologies alone.' },
+  { source: 'McKinsey Global Institute', span: '2016 → 2030', created: 555, createdHi: 890, displaced: 400, displacedHi: 800,
+    note: 'Displaced: 400M at midpoint adoption, up to 800M at fastest. Created: 555M–890M of new labor demand.' },
+];
+
+// BLS Employment Projections 2024–34, occupations named as affected by AI.
+const US = [
+  ['Data scientists', 33.5, 82500],
+  ['Information security analysts', 28.5, 52100],
+  ['Actuaries', 21.8, 7300],
+  ['Operations research analysts', 21.5, 24100],
+  ['Computer & information research scientists', 19.7, 7900],
+  ['Software developers', 15.8, 267700],
+  ['Medical records specialists', 7.1, 13800],
+  ['Sales engineers', 5.5, 3100],
+  ['Medical secretaries & admin assistants', 4.2, 35300],
+  ['Executive secretaries & admin assistants', -1.6, -7900],
+  ['Secretaries & admin assistants (general)', -1.6, -30800],
+  ['Medical transcriptionists', -4.9, -2200],
+  ['Claims adjusters, examiners & investigators', -5.1, -18200],
+  ['Broadcast announcers & radio DJs', -5.5, -1300],
+  ['Customer service representatives', -5.5, -153700],
+  ['Legal secretaries & admin assistants', -5.8, -9000],
+  ['Credit authorizers, checkers & clerks', -6.2, -700],
+  ['Procurement clerks', -8.7, -5400],
+];
+const US_TOTAL_PCT = 3.1;
+
+const TASKS = [
+  { label: 'Now (2025)', people: 47, both: 30, tech: 22 },
+  { label: 'By 2030', people: 33, both: 33, tech: 34 },
+];
+
+const GROW = ['Farmworkers, labourers & other agricultural workers', 'Light truck or delivery drivers',
+  'Software & applications developers', 'Building framers, finishers & related trades', 'Shop salespersons',
+  'Food processing workers', 'Car, van & motorcycle drivers', 'Nursing professionals',
+  'Food & beverage serving workers', 'General & operations managers', 'Social work & counselling professionals',
+  'Project managers', 'University & higher education teachers', 'Secondary education teachers', 'Personal care aides'];
+const DECLINE = ['Building caretakers, cleaners & housekeepers', 'Administrative assistants & executive secretaries',
+  'Transportation attendants & conductors', 'Bank tellers & related clerks', 'Printing & related trades workers',
+  'Business services & administration managers', 'Accounting, bookkeeping & payroll clerks', 'Graphic designers',
+  'Cashiers & ticket clerks', 'Claims adjusters, examiners & investigators', 'Accountants & auditors', 'Security guards',
+  'Material-recording & stock-keeping clerks', 'Data entry clerks', 'Client information & customer service workers'];
+
+/* ---------- helpers ---------- */
+function el(tag, attrs = {}, parent) {
+  const n = document.createElementNS(NS, tag);
+  for (const k in attrs) n.setAttribute(k, attrs[k]);
+  if (parent) parent.appendChild(n);
+  return n;
+}
+function txt(parent, x, y, s, cls, anchor = 'start') {
+  const t = el('text', { x, y, class: cls, 'text-anchor': anchor, 'dominant-baseline': 'middle' }, parent);
+  t.textContent = s;
+  return t;
+}
+// Horizontal bar with a 4px rounded data-end and a square baseline end.
+function hbar(parent, x0, x1, y, h, fill, cls = 'bar') {
+  const r = Math.min(4, Math.abs(x1 - x0) / 2, h / 2);
+  const dir = x1 >= x0 ? 1 : -1;
+  const xe = x1, xb = x0;
+  const d = `M${xb},${y} H${xe - dir * r} Q${xe},${y} ${xe},${y + r} V${y + h - r} Q${xe},${y + h} ${xe - dir * r},${y + h} H${xb} Z`;
+  return el('path', { d, fill, class: cls }, parent);
+}
+const fmtM = v => (v < 0 ? '−' : '') + Math.abs(v) + 'M';
+const fmtSignedM = v => (v > 0 ? '+' : v < 0 ? '−' : '') + Math.abs(v) + 'M';
+const fmtInt = v => (v > 0 ? '+' : v < 0 ? '−' : '') + Math.abs(v).toLocaleString('en-US');
+const fmtPct = v => (v > 0 ? '+' : v < 0 ? '−' : '') + Math.abs(v).toFixed(1) + '%';
+
+/* ---------- tooltip ---------- */
+const tip = document.getElementById('tip');
+function showTip(evt, title, rows, note) {
+  tip.replaceChildren();
+  const t = document.createElement('div'); t.className = 't'; t.textContent = title; tip.appendChild(t);
+  for (const [color, value, label] of rows) {
+    const r = document.createElement('div'); r.className = 'r';
+    const k = document.createElement('span'); k.className = 'lk'; k.style.background = color;
+    const b = document.createElement('b'); b.textContent = value;
+    const l = document.createElement('span'); l.textContent = label;
+    r.append(k, b, l); tip.appendChild(r);
+  }
+  if (note) { const n = document.createElement('div'); n.className = 'n'; n.textContent = note; tip.appendChild(n); }
+  tip.style.opacity = 1;
+  placeTip(evt);
+}
+function placeTip(evt) {
+  let x, y;
+  if (evt.clientX !== undefined && evt.type !== 'focus') { x = evt.clientX; y = evt.clientY; }
+  else { const b = evt.target.getBoundingClientRect(); x = b.left + b.width / 2; y = b.top; }
+  const w = tip.offsetWidth, h = tip.offsetHeight;
+  let left = x + 14, top = y + 14;
+  if (left + w > innerWidth - 8) left = x - w - 14;
+  if (top + h > innerHeight - 8) top = y - h - 14;
+  tip.style.left = Math.max(8, left) + 'px';
+  tip.style.top = Math.max(8, top) + 'px';
+}
+function hideTip() { tip.style.opacity = 0; }
+function bindTip(node, row, fn) {
+  node.setAttribute('tabindex', '0');
+  const on = e => { fn(e); row.parentNode.querySelectorAll('.row').forEach(r => r.classList.toggle('dim', r !== row)); };
+  const off = () => { hideTip(); row.parentNode.querySelectorAll('.row').forEach(r => r.classList.remove('dim')); };
+  node.addEventListener('pointerenter', on);
+  node.addEventListener('pointermove', placeTip);
+  node.addEventListener('pointerleave', off);
+  node.addEventListener('focus', on);
+  node.addEventListener('blur', off);
+}
+const css = name => getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+
+/* ---------- chart 1: forecasts ---------- */
+let zoomWEF = false;
+function drawForecasts() {
+  const rows = zoomWEF ? FORECASTS.filter(f => !f.createdHi) : FORECASTS;
+  const host = document.getElementById('chart-forecasts');
+  const W = host.clientWidth || 900;
+  const narrow = W < 620;
+  const labelW = narrow ? 0 : 200;
+  const rowH = narrow ? 64 : 46, barH = narrow ? 14 : 18;
+  const top = 8, bottom = 28, padR = 44, padL = 40;
+  const H = top + rows.length * rowH + bottom;
+  const [min, max] = zoomWEF ? [-110, 200] : [-800, 900];
+  const x0 = labelW + padL, x1 = W - padR;
+  const sx = v => x0 + (v - min) / (max - min) * (x1 - x0);
+
+  host.replaceChildren();
+  const svg = el('svg', { viewBox: `0 0 ${W} ${H}`, role: 'img', 'aria-label': 'Forecasts of jobs created and displaced worldwide, in millions' }, host);
+
+  const ticks = zoomWEF
+    ? (narrow ? [-100, 0, 100, 200] : [-100, -50, 0, 50, 100, 150, 200])
+    : (narrow ? [-800, -400, 0, 400, 800] : [-800, -600, -400, -200, 0, 200, 400, 600, 800]);
+  for (const t of ticks) {
+    el('line', { x1: sx(t), x2: sx(t), y1: top, y2: H - bottom, stroke: t === 0 ? css('--axis') : css('--grid'), 'stroke-width': 1 }, svg);
+    txt(svg, sx(t), H - bottom + 14, (t === 0 ? '0' : fmtM(t)), 'tick', 'middle');
+  }
+
+  rows.forEach((f, i) => {
+    const g = el('g', { class: 'row' }, svg);
+    const yRow = top + i * rowH;
+    const yBar = narrow ? yRow + 30 : yRow + (rowH - barH) / 2;
+    const cy = yBar + barH / 2;
+
+    if (narrow) {
+      txt(g, 0, yRow + 10, f.source, 'rowlabel');
+      txt(g, 0, yRow + 24, f.span, 'rowsub');
+    } else {
+      txt(g, 0, cy - 8, f.source, 'rowlabel');
+      txt(g, 0, cy + 9, f.span, 'rowsub');
+    }
+
+    // 2px surface gap either side of zero so the two bars read as separate marks.
+    if (f.displacedHi) el('line', { x1: sx(-f.displaced), x2: sx(-f.displacedHi), y1: cy, y2: cy, stroke: css('--loss'), 'stroke-width': 2, opacity: .55, class: 'bar' }, g);
+    if (f.createdHi) el('line', { x1: sx(f.created), x2: sx(f.createdHi), y1: cy, y2: cy, stroke: css('--gain'), 'stroke-width': 2, opacity: .55, class: 'bar' }, g);
+    if (f.displacedHi) el('line', { x1: sx(-f.displacedHi), x2: sx(-f.displacedHi), y1: cy - 5, y2: cy + 5, stroke: css('--loss'), 'stroke-width': 2, opacity: .55, class: 'bar' }, g);
+    if (f.createdHi) el('line', { x1: sx(f.createdHi), x2: sx(f.createdHi), y1: cy - 5, y2: cy + 5, stroke: css('--gain'), 'stroke-width': 2, opacity: .55, class: 'bar' }, g);
+
+    hbar(g, sx(0) - 1, sx(-f.displaced), yBar, barH, css('--loss'));
+    hbar(g, sx(0) + 1, sx(f.created), yBar, barH, css('--gain'));
+
+    // Value labels at the bar ends (or range ends).
+    const leftEnd = sx(-(f.displacedHi || f.displaced)), rightEnd = sx(f.createdHi || f.created);
+    txt(g, leftEnd - 6, cy, f.displacedHi ? `−${f.displaced}–${f.displacedHi}M` : fmtM(-f.displaced), 'val', 'end');
+    txt(g, rightEnd + 6, cy, f.createdHi ? `+${f.created}–${f.createdHi}M` : '+' + f.created + 'M', 'val');
+
+    const net = f.createdHi ? null : f.created - f.displaced;
+    if (net !== null) {
+      const dx = sx(net);
+      el('rect', { x: dx - 5, y: cy - 5, width: 10, height: 10, fill: css('--ink'), stroke: css('--surface'), 'stroke-width': 2, transform: `rotate(45 ${dx} ${cy})`, rx: 1 }, g);
+    }
+
+    const hit = el('rect', { x: 0, y: yRow, width: W, height: rowH, class: 'hit', 'aria-label':
+      `${f.source}, ${f.span}: ${f.createdHi ? f.created + ' to ' + f.createdHi : f.created} million created, ${f.displacedHi ? f.displaced + ' to ' + f.displacedHi : f.displaced} million displaced` }, g);
+    bindTip(hit, g, e => showTip(e, `${f.source} · ${f.span}`, [
+      [css('--gain'), f.createdHi ? `+${f.created}–${f.createdHi}M` : '+' + f.created + 'M', 'created'],
+      [css('--loss'), f.displacedHi ? `−${f.displaced}–${f.displacedHi}M` : fmtM(-f.displaced), 'displaced'],
+      ...(net !== null ? [[css('--ink-2'), fmtSignedM(net), 'net']] : []),
+    ], f.note));
+  });
+}
+
+function tableForecasts() {
+  const t = document.getElementById('table-forecasts');
+  t.innerHTML = '<thead><tr><th>Forecast</th><th>Period</th><th class="num">Created</th><th class="num">Displaced</th><th class="num">Net</th><th>Notes</th></tr></thead>';
+  const tb = document.createElement('tbody');
+  for (const f of FORECASTS) {
+    const tr = document.createElement('tr');
+    const cells = [f.source, f.span,
+      f.createdHi ? `${f.created}–${f.createdHi}M` : f.created + 'M',
+      f.displacedHi ? `${f.displaced}–${f.displacedHi}M` : f.displaced + 'M',
+      f.createdHi ? 'n/a (ranges)' : fmtSignedM(f.created - f.displaced), f.note];
+    cells.forEach((c, i) => { const td = document.createElement('td'); td.textContent = c; if (i >= 2 && i <= 4) td.className = 'num'; tr.appendChild(td); });
+    tb.appendChild(tr);
+  }
+  t.appendChild(tb);
+}
+
+/* ---------- chart 2: task shares ---------- */
+function drawTasks() {
+  const host = document.getElementById('chart-tasks');
+  const W = host.clientWidth || 900;
+  const narrow = W < 620;
+  const labelW = narrow ? 78 : 110, barH = 24, rowH = 44, top = 4, bottom = 26;
+  const H = top + TASKS.length * rowH + bottom;
+  const x0 = labelW, x1 = W - 4;
+  const sx = v => x0 + v / 100 * (x1 - x0);
+  host.replaceChildren();
+  const svg = el('svg', { viewBox: `0 0 ${W} ${H}`, role: 'img', 'aria-label': 'Share of work tasks done mainly by people, by both, or mainly by technology, now and by 2030' }, host);
+  for (const t of [0, 25, 50, 75, 100]) {
+    el('line', { x1: sx(t), x2: sx(t), y1: top, y2: H - bottom, stroke: css('--grid'), 'stroke-width': 1 }, svg);
+    txt(svg, sx(t), H - bottom + 14, t + '%', 'tick', t === 0 ? 'start' : t === 100 ? 'end' : 'middle');
+  }
+  const segs = [['people', '--s1', 'Mainly people'], ['both', '--s2', 'People and technology'], ['tech', '--s3', 'Mainly technology']];
+  TASKS.forEach((d, i) => {
+    const g = el('g', { class: 'row' }, svg);
+    const y = top + i * rowH + (rowH - barH) / 2, cy = y + barH / 2;
+    txt(g, 0, cy, d.label, 'rowlabel');
+    const total = d.people + d.both + d.tech;
+    let acc = 0;
+    segs.forEach(([k, c], j) => {
+      const a = sx(acc / total * 100) + (j ? 1 : 0);
+      acc += d[k];
+      const b = sx(acc / total * 100) - (j < segs.length - 1 ? 1 : 0);
+      if (j === segs.length - 1) hbar(g, a, b, y, barH, css(c));
+      else el('rect', { x: a, y, width: Math.max(0, b - a), height: barH, fill: css(c), class: 'bar' }, g);
+      const mid = (a + b) / 2;
+      const label = el('text', { x: mid, y: cy, 'text-anchor': 'middle', 'dominant-baseline': 'middle', 'font-size': 12, 'font-weight': 600, fill: '#ffffff' }, g);
+      label.textContent = d[k] + '%';
+    });
+    const hit = el('rect', { x: 0, y: top + i * rowH, width: W, height: rowH, class: 'hit', 'aria-label': `${d.label}: ${d.people}% mainly people, ${d.both}% both, ${d.tech}% mainly technology` }, g);
+    bindTip(hit, g, e => showTip(e, d.label, segs.map(([k, c, l]) => [css(c), d[k] + '%', l]), 'Share of all work tasks (WEF 2025, Figure 2.7).'));
+  });
+}
+
+/* ---------- chart 3: US occupations ---------- */
+function drawUS() {
+  const host = document.getElementById('chart-us');
+  const W = host.clientWidth || 900;
+  const narrow = W < 620;
+  const labelW = narrow ? 150 : 290, rowH = narrow ? 30 : 26, barH = 14, top = 6, bottom = 28, padR = 56;
+  const H = top + US.length * rowH + bottom;
+  const min = -10, max = 35;
+  const x0 = labelW + 44, x1 = W - padR;
+  const sx = v => x0 + (v - min) / (max - min) * (x1 - x0);
+  host.replaceChildren();
+  const svg = el('svg', { viewBox: `0 0 ${W} ${H}`, role: 'img', 'aria-label': 'Projected percent change in US employment, 2024 to 2034, for occupations affected by AI' }, host);
+  for (const t of [-10, 0, 10, 20, 30]) {
+    el('line', { x1: sx(t), x2: sx(t), y1: top, y2: H - bottom, stroke: t === 0 ? css('--axis') : css('--grid'), 'stroke-width': 1 }, svg);
+    txt(svg, sx(t), H - bottom + 14, fmtPct(t).replace('.0', ''), 'tick', 'middle');
+  }
+  el('line', { x1: sx(US_TOTAL_PCT), x2: sx(US_TOTAL_PCT), y1: top, y2: H - bottom, stroke: css('--ink-2'), 'stroke-width': 1.5, 'stroke-dasharray': '3 3' }, svg);
+
+  US.forEach(([name, pct, n], i) => {
+    const g = el('g', { class: 'row' }, svg);
+    const y = top + i * rowH + (rowH - barH) / 2, cy = y + barH / 2;
+    const lbl = txt(g, 0, cy, name, 'rowlabel');
+    if (narrow) lbl.setAttribute('font-size', 11.5);
+    const up = pct > 0;
+    hbar(g, sx(0) + (up ? 1 : -1), sx(pct), y, barH, css(up ? '--gain' : '--loss'));
+    txt(g, up ? sx(pct) + 6 : sx(pct) - 6, cy, fmtPct(pct), 'val', up ? 'start' : 'end');
+    const hit = el('rect', { x: 0, y: top + i * rowH, width: W, height: rowH, class: 'hit', 'aria-label': `${name}: ${fmtPct(pct)}, ${fmtInt(n)} jobs` }, g);
+    bindTip(hit, g, e => showTip(e, name, [
+      [css(up ? '--gain' : '--loss'), fmtPct(pct), 'change, 2024–34'],
+      [css(up ? '--gain' : '--loss'), fmtInt(n), 'jobs'],
+    ]));
+  });
+  // Keep narrow labels inside the label column.
+  if (narrow) svg.querySelectorAll('.rowlabel').forEach(t => {
+    while (t.getComputedTextLength() > labelW - 4 && t.textContent.length > 4) t.textContent = t.textContent.slice(0, -2) + '…';
+  });
+}
+
+function tableUS() {
+  const t = document.getElementById('table-us');
+  t.innerHTML = '<thead><tr><th>Occupation</th><th class="num">Change, 2024–34</th><th class="num">Jobs</th></tr></thead>';
+  const tb = document.createElement('tbody');
+  for (const [name, pct, n] of [...US, ['Total, all occupations', US_TOTAL_PCT, 5211800]]) {
+    const tr = document.createElement('tr');
+    [name, fmtPct(pct), fmtInt(n)].forEach((c, i) => { const td = document.createElement('td'); td.textContent = c; if (i) td.className = 'num'; tr.appendChild(td); });
+    tb.appendChild(tr);
+  }
+  t.appendChild(tb);
+}
+
+function fillLists() {
+  for (const [id, items] of [['list-grow', GROW], ['list-decline', DECLINE]]) {
+    const ul = document.getElementById(id);
+    for (const s of items) { const li = document.createElement('li'); li.textContent = s; ul.appendChild(li); }
+  }
+}
+
+document.querySelectorAll('.seg button').forEach(b => b.addEventListener('click', () => {
+  zoomWEF = b.dataset.zoom === 'wef';
+  document.querySelectorAll('.seg button').forEach(x => x.setAttribute('aria-pressed', String(x === b)));
+  drawForecasts();
+}));
+
+function drawAll() { drawForecasts(); drawTasks(); drawUS(); }
+tableForecasts(); tableUS(); fillLists(); drawAll();
+let rt; addEventListener('resize', () => { clearTimeout(rt); rt = setTimeout(drawAll, 120); });
+matchMedia('(prefers-color-scheme: dark)').addEventListener('change', drawAll);
+</script>
+</body>
+</html>
